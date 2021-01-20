@@ -16,7 +16,19 @@ class CreateProductService {
   constructor(private productsRepository: IProductsRepository) {}
 
   public async execute({ name, price, quantity }: IRequest): Promise<Product> {
-    // TODO
+    const productAlreadyStored = await this.productsRepository.findByName(name);
+
+    if (productAlreadyStored !== undefined) {
+      throw new AppError('This product is already stored');
+    }
+
+    const product = await this.productsRepository.create({
+      name,
+      price,
+      quantity,
+    });
+
+    return product;
   }
 }
 
